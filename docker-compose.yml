@@ -1,0 +1,28 @@
+version: '3'
+services:
+    mysqldb:
+        image: mysql
+        container_name: mysqldbwc
+        restart: always
+        env_file:
+            - ".env"
+        environment:
+            - MYSQL_DATABASE=${DB_DATABASE}
+            - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+            - MYSQL_USER=${DB_USERNAME}
+            - MYSQL_PASSWORD=${DB_PASSWORD}
+        ports:
+            - "9090:3306"
+        volumes:
+            - "./docker/data/db/mysql:/var/lib/mysql"
+
+    aws-sam-local:
+       image: cnadiminti/aws-sam-local
+       command: local start-api --docker-volume-basedir "$PWD/functions" --host 0.0.0.0
+       ports:
+         - "3000:3000"
+       volumes:
+         - /var/run/docker.sock:/var/run/docker.sock
+         - ./functions:/var/opt
+
+
